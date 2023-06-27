@@ -1,6 +1,5 @@
 ; Ver 1.1 2023-06-19
-; Modified path due to run in lab computer
-;
+
 
 function shock_line, s2,s3,s4,p
 
