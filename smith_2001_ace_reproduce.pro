@@ -11,9 +11,7 @@ end
 
 pro smith_2001_ace_reproduce
 
-
-
-  fm=file_search('D:\data\ace\mag\level_2_cdaweb\mfi_h3\*.cdf')  ; RTN magnetic field (?)
+  fm=file_search('D:\data\ace\mag\level_2_cdaweb\mfi_h3\*.cdf')  
   fswe=file_search('D:\data\ace\swepam\level_2_cdaweb\swe_h0\2000\*.cdf')
 
   adata=read_cdf(fswe[0],VAR='*')
@@ -22,8 +20,8 @@ pro smith_2001_ace_reproduce
 
   fswi=file_search('D:\data\ace\swics\level_2_cdaweb\swi_h6\2000\*.cdf')
 
-  swevar=['V_RTN','NP','TPR','EPOCH']         ; NO DATA FOR LONGTIUDE, LATITUDE
-  mvar=['MAGNITUDE','EPOCH','BGSM','BRTN']    ; NO DATA FOR LONGTIUDE, LATITUDE
+  swevar=['V_RTN','NP','TPR','EPOCH']      
+  mvar=['MAGNITUDE','EPOCH','BGSM','BRTN']
   swivar=['EPOCH','NH','VH','VTHH']
 
   absB=[]
@@ -55,7 +53,7 @@ pro smith_2001_ace_reproduce
     ind=where(adata.BRTN EQ aatt.BRTN.fillval, cnt)
     if cnt ne 0 then adata.BRTN[ind]=!values.f_nan
 
-    Bz=[Bz,adata.BGSM[*,2]]                     ; z component but southward?
+    Bz=[Bz,adata.BGSM[*,2]]                     ; z component (southward)
     absB=[absB,adata.MAGNITUDE[*,1]]
     Btime=[Btime,cdf_epoch_tojuldays(adata.EPOCH[*,2])]
     BRTN=[BRTN,adata.BRTN]
@@ -71,10 +69,10 @@ pro smith_2001_ace_reproduce
     if cnt ne 0 then adata.NP[ind]=!values.f_nan
     ind=where(adata.TPR EQ aatt.TPR.FILLVAL, cnt)
     if cnt ne 0 then adata.TPR[ind]=!values.f_nan
-    Np=[Np,adata.NP[*,0]]                               ; [time, three comp] but the same (check)
-    Tp=[Tp,adata.TPR[*,0]]                              ; [time, three comp] but the same (check) [according to attribute, radial component of the proton temperature]
+    Np=[Np,adata.NP[*,0]]                               ; [time, three comp] 
+    Tp=[Tp,adata.TPR[*,0]]                              ; [time, three comp] 
     Vr=[Vr,adata.V_RTN[*,0]]
-    time=[time,cdf_epoch_tojuldays(adata.EPOCH[*,0])]   ; [time, three comp] but the same (check)
+    time=[time,cdf_epoch_tojuldays(adata.EPOCH[*,0])]   ; [time, three comp] 
     ;------------------------------------------------------------------------------------
 
     ; SWICS ----------------------------------------------------------------------------
@@ -97,11 +95,10 @@ pro smith_2001_ace_reproduce
   ;------------------------------------------------------------------------------------
   ; Thermal temperature from thermal speed
   ;------------------------------------------------------------------------------------
-
   mp=1.67*1e-27     ; kg
   kb = 1.38*1e-23   ; K
   SWIVth*=1e3       ; km/s -> m/s (mks units)
-  SWITp=mp*SWIVth^2/kb  ; 원래 2로 나눠야 하는 것 같은데 안 나눔....
+  SWITp=mp*SWIVth^2/kb  ; 
   ;------------------------------------------------------------------------------------
   ;
   ;------------------------------------------------------------------------------------
@@ -119,13 +116,13 @@ pro smith_2001_ace_reproduce
   Bz=BRTN[*,2] ; N comp
 
 
-  ind=where(Bx gt 0 and By gt 0, cnt)   ; 1사분면
+  ind=where(Bx gt 0 and By gt 0, cnt)  
   if cnt ne 0 then Blon[ind]=atan(By[ind]/Bx[ind])*180./3.141592
-  ind=where(Bx gt 0 and By lt 0, cnt)   ; 4사분면
+  ind=where(Bx gt 0 and By lt 0, cnt)  
   if cnt ne 0 then Blon[ind]=(2.*!pi+atan(By[ind]/Bx[ind]))*180./3.141592
-  ind=where(Bx lt 0 and By gt 0, cnt)   ; 2사분면
+  ind=where(Bx lt 0 and By gt 0, cnt)  
   if cnt ne 0 then Blon[ind]=acos(Bx[ind]/sqrt(Bx[ind]^2+By[ind]^2))*180./3.141592
-  ind=where(Bx le 0 and By le 0, cnt)   ; 3사분면
+  ind=where(Bx le 0 and By le 0, cnt)
   if cnt ne 0 then Blon[ind]=(!pi-asin(By[ind]/sqrt(Bx[ind]^2+By[ind]^2)))*180./3.141592
 
 
@@ -201,7 +198,6 @@ pro smith_2001_ace_reproduce
 
   ;------------------------------------------------------------------------------------
   ; Plasma beta & Alfven speed
-  ; to adjust time resolution
   ;------------------------------------------------------------------------------------
   ; FOR SWEPAM
   time_array=value_locate(Btime,time)
@@ -281,8 +277,8 @@ pro smith_2001_ace_reproduce
 
   stop
   stop
-  ;p.save,'C:\Users\neagg\OneDrive\바탕 화면\task\lab\temp\20230614\smith_2001_reproduce1_ACE_scatterplot.png'
-  ;w2.save,'E:\temp\20230619\smith_2001_reproduce1_ACE_scatterplot.png'
+  
+  
   w2.save,'D:\temp\20230620\smith_2001_Figure1_ACE_scatterplot_SWICS_12min.png'
   w2.save,'D:\temp\20230620\smith_2001_Figure1_ACE_scatterplot_SWICS_30minsmoothing.png'
   stop
